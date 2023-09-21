@@ -29,9 +29,9 @@ func AddRoutes(app *echo.Echo) {
 	})
 
 	g := app.Group("/users")
-
 	g.GET("", controller.GetAllUser)
 	g.POST("", controller.AddUser)
-
 	g.GET("/:id", controller.GetUser)
+	g.DELETE("/:id", controller.DeleteUser)
+
 }
