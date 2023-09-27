@@ -28,10 +28,22 @@ func AddRoutes(app *echo.Echo) {
 		})
 	})
 
+	addUserRoutes(app)
+	addCampusRoutes(app)
+}
+
+func addUserRoutes(app *echo.Echo) {
 	g := app.Group("/users")
-	g.GET("", controller.GetAllUser)
+
 	g.POST("", controller.AddUser)
+	g.GET("", controller.GetAllUser)
 	g.GET("/:id", controller.GetUser)
 	g.DELETE("/:id", controller.DeleteUser)
+}
 
+func addCampusRoutes(app *echo.Echo) {
+	g := app.Group("/campus")
+
+	g.GET("/:id", controller.GetCampusInfo)
+	g.GET("/:id/faculties", controller.GetCampusFaculties)
 }

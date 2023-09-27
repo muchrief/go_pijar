@@ -23,10 +23,10 @@ const (
 	SQLITE     DatabaseType = "sqlite"
 )
 
-func InitializeDB() {
+func InitializeDB(dbType DatabaseType) {
 	dbOnce.Do(func() {
 		uri := getDatabaseUri()
-		db, err := openConnectionDatabase(POSTGRESQL, uri, &gorm.Config{})
+		db, err := openConnectionDatabase(dbType, uri, &gorm.Config{})
 		if err != nil {
 			log.Fatal(err)
 			panic(err)
@@ -45,7 +45,7 @@ func InitializeDB() {
 func getDatabaseUri() string {
 	uri := os.Getenv("DB_URI")
 	if uri == "" {
-		return "host=localhost user=postgres password=m03kht4r1999 dbname=pijar port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+		return "host=localhost user=postgres password=postgres dbname=pijar port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 	}
 
 	return uri
@@ -68,12 +68,29 @@ func openConnectionDatabase(dbType DatabaseType, uri string, config *gorm.Config
 }
 
 func autoMigrate(db *gorm.DB) error {
-	err := db.AutoMigrate(&db_model.User{})
-	if err != nil {
-		return err
-	}
+	// err := db.AutoMigrate(&db_model.User{})
+	// if err != nil {
+	// 	return err
+	// }
 
-	return nil
+	err := db.AutoMigrate(
+		&db_model.Campus{},
+		&db_model.Faculty{},
+		&db_model.School{},
+		&db_model.Programme{},
+		&db_model.Student{},
+		&db_model.Course{},
+		&db_model.CourseStudent{},
+		&db_model.Club{},
+		&db_model.Sport{},
+		&db_model.Precourse{},
+		&db_model.Lecture{},
+		&db_model.LectureCourse{},
+		&db_model.Committe{},
+		&db_model.CommitteLecture{},
+	)
+
+	return err
 }
 
 // func autoDowngrade(db *gorm.DB) error {
@@ -81,6 +98,23 @@ func autoMigrate(db *gorm.DB) error {
 // 	if err != nil {
 // 		return err
 // 	}
+
+// err := db.Migrator().DropTable(
+// 	&db_model.CommitteLecture{},
+// 	&db_model.Committe{},
+// 	&db_model.LectureCourse{},
+// 	&db_model.Lecture{},
+// 	&db_model.Precourse{},
+// 	&db_model.Sport{},
+// 	&db_model.Club{},
+// 	&db_model.CourseStudent{},
+// 	&db_model.Course{},
+// 	&db_model.Student{},
+// 	&db_model.Programme{},
+// 	&db_model.School{},
+// 	&db_model.Faculty{},
+// 	&db_model.Campus{},
+// )
 
 // 	return nil
 // }

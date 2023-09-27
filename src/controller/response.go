@@ -46,3 +46,14 @@ func ErrBadRequest(err error, c echo.Context) error {
 		},
 	)
 }
+
+func SuccessResponse(data interface{}, c echo.Context) error {
+	return c.JSON(
+		http.StatusOK,
+		model.ResponeApi[interface{}]{
+			Code:    http.StatusOK,
+			Message: "Success",
+			Data:    data,
+		},
+	)
+}

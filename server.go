@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	database.InitializeDB()
+	database.InitializeDB(database.POSTGRESQL)
 }
 
 func main() {

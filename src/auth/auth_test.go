@@ -13,7 +13,6 @@ func TestGenerateAccessKey(t *testing.T) {
 	data := &model.Auth{
 		Id:       "qweqweasdasdasd",
 		Username: "jhkgadsgjhadsg@gmail.com",
-		Role:     model.PUBLIC,
 	}
 
 	token, err := auth.GenerateAccessToken(data)

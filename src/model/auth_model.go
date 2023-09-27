@@ -10,9 +10,8 @@ const (
 )
 
 type Auth struct {
-	Id       string   `json:"id"`
-	Username string   `json:"Username"`
-	Role     UserRole `json:"role"`
+	Id       string `json:"id"`
+	Username string `json:"Username"`
 	jwt.StandardClaims
 }
 

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"math"
 	"net/http"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/muchrief/go_pijar/src/auth"
 	"github.com/muchrief/go_pijar/src/model"
 	"github.com/muchrief/go_pijar/src/repo"
-	"gorm.io/gorm"
+	"github.com/muchrief/go_pijar/src/service"
 
 	"github.com/labstack/echo/v4"
 )
@@ -47,7 +46,7 @@ func GetAllUser(c echo.Context) error {
 		Data:    p,
 	}
 
-	return c.JSON(http.StatusOK, resp)
+	return SuccessResponse(resp, c)
 }
 
 func AddUser(c echo.Context) error {
@@ -62,33 +61,15 @@ func AddUser(c echo.Context) error {
 		return ErrUnprocessableEntity(err, c)
 	}
 
-	repo := repo.NewUserRepo(database.DB)
-	_, err = repo.GetUserByEmail(user.Email)
-	if err == nil {
-		return ErrBadRequest(
-			errors.New("user has been added"),
-			c,
-		)
-	}
-
-	dbUser := &db_model.User{
-		Username: user.Email,
-		Password: user.Password,
-		Role:     db_model.PUBLIC,
-	}
-	err = database.DB.Create(dbUser).Error
+	uService := service.NewUserService(database.DB)
+	newUser, err := uService.CreateUser(user.Email, user.Password)
 	if err != nil {
-		if errors.Is(gorm.ErrDuplicatedKey, err) {
-			return ErrBadRequest(err, c)
-		}
-
 		return ErrInternalServer(err, c)
 	}
 
 	token, err := auth.GenerateAccessToken(&model.Auth{
-		Id:       dbUser.Id.String(),
-		Username: dbUser.Username,
-		Role:     model.UserRole(dbUser.Role),
+		Id:       newUser.Id.String(),
+		Username: newUser.Username,
 	})
 	if err != nil {
 		return ErrInternalServer(err, c)

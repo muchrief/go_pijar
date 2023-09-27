@@ -22,6 +22,14 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 	}
 }
 
+func (u *UserRepo) CreateUser(payload *db_model.User) (*db_model.User, error) {
+	if err := u.db.Create(payload).Error; err != nil {
+		return nil, err
+	}
+
+	return payload, nil
+}
+
 func (u *UserRepo) GetAllUser() ([]*db_model.User, error) {
 	var user []*db_model.User
 	res := u.db.Find(&user)
