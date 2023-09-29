@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func getCampus(c echo.Context) error {
+func GetCampus(c echo.Context) error {
 	var p model.Pagination
 	err := c.Bind(&p)
 	if err != nil {
@@ -36,7 +36,7 @@ func getCampus(c echo.Context) error {
 
 }
 
-func getCampusDetail(c echo.Context) error {
+func GetCampusDetail(c echo.Context) error {
 	id := c.Param("id")
 	crepo := repo.NewCampusRepo(database.DB)
 
@@ -52,7 +52,7 @@ func getCampusDetail(c echo.Context) error {
 	return SuccessResponse(campus, c)
 }
 
-func getCampusFaculties(c echo.Context) error {
+func GetCampusFaculties(c echo.Context) error {
 	id := c.Param("id")
 	crepo := repo.NewCampusRepo(database.DB)
 
@@ -68,7 +68,7 @@ func getCampusFaculties(c echo.Context) error {
 	return SuccessResponse(campus, c)
 }
 
-func getCampusSchools(c echo.Context) error {
+func GetCampusSchools(c echo.Context) error {
 	id := c.Param("id")
 	crepo := repo.NewCampusRepo(database.DB)
 
@@ -87,8 +87,8 @@ func getCampusSchools(c echo.Context) error {
 func RegisterCampusApi(app *echo.Echo) {
 	g := app.Group("/campus")
 
-	g.GET("", getCampus)
-	g.GET("/:id", getCampusDetail)
-	g.GET("/:id/faculties", getCampusFaculties)
-	g.GET("/:id/schools", getCampusSchools)
+	g.GET("", GetCampus)
+	g.GET("/:id", GetCampusDetail)
+	g.GET("/:id/faculties", GetCampusFaculties)
+	g.GET("/:id/schools", GetCampusSchools)
 }

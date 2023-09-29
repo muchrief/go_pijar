@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"math"
 	"net/http"
 
@@ -14,30 +13,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 )
-
-func CheckEmail(c echo.Context) error {
-	var payload model.CheckEmailPayload
-	err := c.Bind(&payload)
-	if err != nil {
-		return ErrInternalServerResponse(err, c)
-	}
-
-	userRepo := repo.NewUserRepo(database.DB)
-	user, err := userRepo.GetUserByEmail(payload.Email)
-	if err != nil {
-		if errors.Is(err, repo.ErrUserNotFound) {
-			return SuccessResponse(nil, c)
-		}
-
-		return ErrInternalServerResponse(err, c)
-	}
-
-	if user == (&db_model.User{}) {
-		return SuccessResponse(nil, c)
-	}
-
-	return SuccessResponse("email has been used", c)
-}
 
 func GetAllUser(c echo.Context) error {
 	repo := repo.NewUserRepo(database.DB)
@@ -153,5 +128,4 @@ func RegisterUserApi(app *echo.Echo) {
 	g.GET("", GetAllUser)
 	g.GET("/:id", GetUser)
 	g.DELETE("/:id", DeleteUser)
-	g.POST("/check", CheckEmail)
 }

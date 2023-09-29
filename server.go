@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/muchrief/go_pijar/database"
 	"github.com/muchrief/go_pijar/src/api"
+	"github.com/muchrief/go_pijar/src/helper"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,5 +28,6 @@ func main() {
 
 	api.RegisterApi(app)
 
-	app.Logger.Fatal(app.Start(":1323"))
+	addr := helper.LoadEnv("ADDRESS", "0.0.0.0:3000")
+	app.Logger.Fatal(app.Start(addr))
 }

@@ -7,12 +7,14 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/muchrief/go_pijar/database"
+	"github.com/muchrief/go_pijar/database/db_model"
 	"github.com/muchrief/go_pijar/src/model"
 	"github.com/muchrief/go_pijar/src/repo"
+	"github.com/muchrief/go_pijar/src/service"
 	"gorm.io/gorm"
 )
 
-func getLectures(c echo.Context) error {
+func GetLectures(c echo.Context) error {
 	var p model.Pagination
 	err := c.Bind(&p)
 	if err != nil {
@@ -36,7 +38,7 @@ func getLectures(c echo.Context) error {
 	return SuccessResponse(p, c)
 }
 
-func lectureDetail(c echo.Context) error {
+func LectureDetail(c echo.Context) error {
 	idParam := c.Param("id")
 
 	repo := repo.NewLectureRepo(database.DB)
@@ -58,7 +60,7 @@ func lectureDetail(c echo.Context) error {
 	return SuccessResponse(lecture, c)
 }
 
-func lectureCourse(c echo.Context) error {
+func LectureCourse(c echo.Context) error {
 	idParam := c.Param("id")
 
 	repo := repo.NewLectureRepo(database.DB)
@@ -78,12 +80,89 @@ func lectureCourse(c echo.Context) error {
 	}
 
 	return SuccessResponse(lecture, c)
+}
+
+func AddLecture(c echo.Context) error {
+	var payload model.LecturePayload
+	err := c.Bind(&payload)
+	if err != nil {
+		return ErrInternalServerResponse(err, c)
+	}
+
+	err = c.Validate(payload)
+	if err != nil {
+		return ErrUnprocessableEntityResponse(err, c)
+	}
+
+	userRepo := repo.NewUserRepo(database.DB)
+	_, err = userRepo.GetUserByEmail(payload.Email)
+	if err != nil {
+		if errors.Is(err, repo.ErrUserNotFound) {
+			err := errors.New("email belum terdaftar")
+			return ErrBadRequestResponse(err, c)
+		}
+		return ErrInternalServerResponse(err, nil)
+	}
+
+	lectureService := service.NewLectureService(database.DB)
+	lecture := &db_model.Lecture{
+		SchoolName:   payload.SchoolName,
+		SupervisorId: payload.SupervisorId,
+		Name:         payload.Name,
+		Title:        payload.Title,
+	}
+	result, err := lectureService.AddLecture(lecture)
+	if err != nil {
+		return ErrInternalServerResponse(err, c)
+	}
+
+	return SuccessResponse(result, c)
+}
+
+func UpdateLecture(c echo.Context) error {
+	var payload model.LecturePayload
+	err := c.Bind(&payload)
+	if err != nil {
+		return ErrInternalServerResponse(err, c)
+	}
+
+	err = c.Validate(payload)
+	if err != nil {
+		return ErrUnprocessableEntityResponse(err, c)
+	}
+
+	userRepo := repo.NewUserRepo(database.DB)
+	_, err = userRepo.GetUserByEmail(payload.Email)
+	if err != nil {
+		if errors.Is(err, repo.ErrUserNotFound) {
+			err := errors.New("email belum terdaftar")
+			return ErrBadRequestResponse(err, c)
+		}
+		return ErrInternalServerResponse(err, nil)
+	}
+
+	lectureService := service.NewLectureService(database.DB)
+	lecture := &db_model.Lecture{
+		SchoolName:   payload.SchoolName,
+		SupervisorId: payload.SupervisorId,
+		Name:         payload.Name,
+		Title:        payload.Title,
+	}
+	result, err := lectureService.UpdateLecture(lecture)
+	if err != nil {
+		return ErrInternalServerResponse(err, c)
+	}
+
+	return SuccessResponse(result, c)
 }
 
 func RegisterLectureApi(app *echo.Echo) {
 	g := app.Group("/lectures")
 
-	g.GET("", getLectures)
-	g.GET("/:id", lectureDetail)
-	g.GET("/:id/courses", lectureCourse)
+	g.GET("", GetLectures)
+	g.GET("/:id", LectureDetail)
+	g.GET("/:id/courses", LectureCourse)
+
+	g.POST("", AddLecture)
+	g.PUT("", UpdateLecture)
 }

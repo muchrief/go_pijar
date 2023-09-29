@@ -61,3 +61,19 @@ func (l *LectureRepo) GetLectureCourse(id int64) (*db_model.Lecture, error) {
 
 	return &result, nil
 }
+
+func (l *LectureRepo) CreateLecture(payload *db_model.Lecture) (*db_model.Lecture, error) {
+	if err := l.db.Create(payload).Error; err != nil {
+		return nil, err
+	}
+
+	return payload, nil
+}
+
+func (l *LectureRepo) UpdateLecture(payload *db_model.Lecture) (*db_model.Lecture, error) {
+	if err := l.db.Updates(payload).Error; err != nil {
+		return nil, err
+	}
+
+	return payload, nil
+}

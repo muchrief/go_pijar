@@ -9,7 +9,7 @@ import (
 	"github.com/muchrief/go_pijar/src/repo"
 )
 
-func clubs(c echo.Context) error {
+func Clubs(c echo.Context) error {
 	var p model.Pagination
 	err := c.Bind(&p)
 	if err != nil {
@@ -33,7 +33,7 @@ func clubs(c echo.Context) error {
 	return SuccessResponse(p, c)
 }
 
-func club(c echo.Context) error {
+func Club(c echo.Context) error {
 	id := c.Param("id")
 	repo := repo.NewClubRepo(database.DB)
 
@@ -48,6 +48,6 @@ func club(c echo.Context) error {
 func RegisterClubApi(app *echo.Echo) {
 	g := app.Group("/club")
 
-	g.GET("", clubs)
-	g.GET("/:id", club)
+	g.GET("", Clubs)
+	g.GET("/:id", Club)
 }

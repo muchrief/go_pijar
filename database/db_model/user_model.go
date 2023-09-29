@@ -14,10 +14,10 @@ const (
 )
 
 type User struct {
-	Id        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	Id        uuid.UUID `gorm:"type:uuid;primaryKey;default:generate_uuid_v4()" json:"id"`
 	Username  string    `gorm:"not_null;unique" json:"username"`
 	Password  string    `gorm:"not_null" json:"-"`
-	Role      UserRole  `gorm:"default:public;not_null" json:"-"`
+	Role      UserRole  `gorm:"not_null;default:student;" json:"-"`
 	CreatedAt int64     `gorm:"autoCreateTime:mili" json:"created_at"`
 	UpdatedAt int64     `gorm:"autoUpdateTime:mili" json:"-"`
 }
