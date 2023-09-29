@@ -74,6 +74,7 @@ func autoMigrate(db *gorm.DB) error {
 	// }
 
 	err := db.AutoMigrate(
+		&db_model.User{},
 		&db_model.Campus{},
 		&db_model.Faculty{},
 		&db_model.School{},

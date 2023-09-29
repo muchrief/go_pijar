@@ -2,11 +2,11 @@ package db_model
 
 type Club struct {
 	Id         string   `gorm:"primaryKey" json:"id"`
-	Name       string   `gorm:"notNull" json:"name"`
-	Phone      string   `gorm:"notNull" json:"phone"`
+	Name       string   `gorm:"notNull;unique" json:"name"`
+	Phone      string   `gorm:"notNull;unique" json:"phone"`
 	CampusName string   `gorm:"notNull" json:"campus_name"`
-	Sports     []*Sport `gorm:"foreignKey:SportName;references:name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"sports"`
-	Campus     *Campus  `json:"campus,omitempty"`
+	Sports     []*Sport `gorm:"foreignKey:ClubName;references:name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"sports"`
+	// Campus     *Campus  `json:"campus,omitempty"`
 }
 
 // CREATE TABLE CLUB(

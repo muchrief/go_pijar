@@ -1,4 +1,4 @@
-package controller
+package api
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/muchrief/go_pijar/src/model"
 )
 
-func ErrInternalServer(err error, c echo.Context) error {
+func ErrInternalServerResponse(err error, c echo.Context) error {
 	return c.JSON(
 		http.StatusInternalServerError,
 		model.ResponeApi[interface{}]{
@@ -17,7 +17,7 @@ func ErrInternalServer(err error, c echo.Context) error {
 	)
 }
 
-func ErrUnprocessableEntity(err error, c echo.Context) error {
+func ErrUnprocessableEntityResponse(err error, c echo.Context) error {
 	return c.JSON(
 		http.StatusUnprocessableEntity,
 		model.ResponeApi[interface{}]{
@@ -27,7 +27,7 @@ func ErrUnprocessableEntity(err error, c echo.Context) error {
 	)
 }
 
-func ErrNotFound(err error, c echo.Context) error {
+func ErrNotFoundResponse(err error, c echo.Context) error {
 	return c.JSON(
 		http.StatusNotFound,
 		model.ResponeApi[interface{}]{
@@ -37,7 +37,7 @@ func ErrNotFound(err error, c echo.Context) error {
 	)
 }
 
-func ErrBadRequest(err error, c echo.Context) error {
+func ErrBadRequestResponse(err error, c echo.Context) error {
 	return c.JSON(
 		http.StatusBadRequest,
 		model.ResponeApi[interface{}]{

@@ -1,6 +1,7 @@
-package controller
+package api
 
 import (
+	"errors"
 	"math"
 	"net/http"
 
@@ -14,12 +15,36 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CheckEmail(c echo.Context) error {
+	var payload model.CheckEmailPayload
+	err := c.Bind(&payload)
+	if err != nil {
+		return ErrInternalServerResponse(err, c)
+	}
+
+	userRepo := repo.NewUserRepo(database.DB)
+	user, err := userRepo.GetUserByEmail(payload.Email)
+	if err != nil {
+		if errors.Is(err, repo.ErrUserNotFound) {
+			return SuccessResponse(nil, c)
+		}
+
+		return ErrInternalServerResponse(err, c)
+	}
+
+	if user == (&db_model.User{}) {
+		return SuccessResponse(nil, c)
+	}
+
+	return SuccessResponse("email has been used", c)
+}
+
 func GetAllUser(c echo.Context) error {
 	repo := repo.NewUserRepo(database.DB)
 	var p model.Pagination
 	err := c.Bind(&p)
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 
 	if p.Sort == "" {
@@ -28,15 +53,15 @@ func GetAllUser(c echo.Context) error {
 
 	users, err := repo.GetAllUser()
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 	p.Total = int64(len(users))
-	countPages := int(math.Ceil(float64(len(users)) / float64(p.Limit)))
+	countPages := int(math.Ceil(float64(len(users)) / float64(p.GetLimit())))
 	p.TotalPages = countPages
 
 	data, err := repo.PaginateUser(&p)
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 	p.Data = data
 
@@ -53,18 +78,18 @@ func AddUser(c echo.Context) error {
 	user := new(model.AddUserPayload)
 	err := c.Bind(user)
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 
 	err = c.Validate(user)
 	if err != nil {
-		return ErrUnprocessableEntity(err, c)
+		return ErrUnprocessableEntityResponse(err, c)
 	}
 
 	uService := service.NewUserService(database.DB)
 	newUser, err := uService.CreateUser(user.Email, user.Password)
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 
 	token, err := auth.GenerateAccessToken(&model.Auth{
@@ -72,7 +97,7 @@ func AddUser(c echo.Context) error {
 		Username: newUser.Username,
 	})
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 
 	resp := model.ResponeApi[model.AuthResp]{
@@ -92,7 +117,7 @@ func GetUser(c echo.Context) error {
 
 	user, err := repo.GetUser(id)
 	if err != nil {
-		return ErrNotFound(err, c)
+		return ErrNotFoundResponse(err, c)
 	}
 
 	resp := model.ResponeApi[db_model.User]{
@@ -110,7 +135,7 @@ func DeleteUser(c echo.Context) error {
 	repo := repo.NewUserRepo(database.DB)
 	err := repo.DeleteUser(id)
 	if err != nil {
-		return ErrInternalServer(err, c)
+		return ErrInternalServerResponse(err, c)
 	}
 
 	return c.JSON(http.StatusOK,
@@ -119,4 +144,14 @@ func DeleteUser(c echo.Context) error {
 			Message: "Success",
 		},
 	)
+}
+
+func RegisterUserApi(app *echo.Echo) {
+	g := app.Group("/users")
+
+	g.POST("", AddUser)
+	g.GET("", GetAllUser)
+	g.GET("/:id", GetUser)
+	g.DELETE("/:id", DeleteUser)
+	g.POST("/check", CheckEmail)
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/muchrief/go_pijar/database"
-	"github.com/muchrief/go_pijar/src/routes"
+	"github.com/muchrief/go_pijar/src/api"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -25,7 +25,7 @@ func main() {
 		),
 	)
 
-	routes.AddRoutes(app)
+	api.RegisterApi(app)
 
 	app.Logger.Fatal(app.Start(":1323"))
 }

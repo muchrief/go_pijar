@@ -1,13 +1,15 @@
 package db_model
 
 type Programme struct {
-	Code       string   `gorm:"primaryKey" json:"code"`
-	Title      string   `gorm:"notNull" json:"title"`
-	Level      string   `gorm:"notNull" json:"level"`
-	Duration   string   `gorm:"notNull" json:"duration"`
-	SchoolName string   `gorm:"notNull" json:"school_name"`
-	School     *School  `json:"school,omitempty"`
-	Courses    []Course `gorm:"foreignKey:ProgrammeCode;references:code;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"courses"`
+	Code       string     `gorm:"primaryKey" json:"code"`
+	Title      string     `gorm:"notNull" json:"title"`
+	Level      string     `gorm:"notNull" json:"level"`
+	Duration   string     `gorm:"notNull" json:"duration"`
+	SchoolName string     `gorm:"notNull" json:"school_name"`
+	Courses    []*Course  `gorm:"foreignKey:ProgrammeCode;references:code;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"courses"`
+	Students   []*Student `gorm:"foreignKey:ProgrammeCode;references:code;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"students"`
+	// School     *School  `json:"school,omitempty"`
+
 }
 
 // CREATE TABLE PROGRAMME(

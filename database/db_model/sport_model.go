@@ -4,7 +4,7 @@ type Sport struct {
 	Id       string `gorm:"primaryKey" json:"id"`
 	Name     string `gorm:"notNull" json:"name"`
 	ClubName string `gorm:"notNull" json:"club_name"`
-	Club     *Club  `json:"club,omitempty"`
+	// Club     *Club  `json:"club,omitempty"`
 }
 
 // CREATE TABLE SPORT(

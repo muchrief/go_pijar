@@ -6,10 +6,10 @@ type Faculty struct {
 	DeanName        string           `gorm:"notNull" json:"dean_name"`
 	Abbrevation     string           `gorm:"notNull;unique" json:"abbrevation"`
 	CampusId        string           `json:"campus_id"`
-	Campus          *Campus          `json:"campus,omitempty"`
-	Schools         []School         `gorm:"foreignKey:FacultyId;references:id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"schools,omitempty"`
+	Schools         []*School        `gorm:"foreignKey:FacultyId;references:id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"schools,omitempty"`
 	Committe        *Committe        `gorm:"foreignKey:FacultyName;references:name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"committe,omitempty"`
 	CommitteLecture *CommitteLecture `gorm:"foreignKey:FacultyName;references:name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"committe_lecture,omitempty"`
+	// Campus          *Campus          `json:"campus,omitempty"`
 }
 
 // CREATE TABLE FACULTY(

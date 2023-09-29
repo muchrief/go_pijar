@@ -24,15 +24,22 @@ func (us *UserService) CreateUser(email, password string) (*db_model.User, error
 		Password: password,
 	}
 
-	user, err := us.repo.GetUserByEmail(email)
-	if err != nil {
-		return nil, err
-	}
+	var user *db_model.User
 
-	if user != (&db_model.User{}) {
-		return user, nil
-	}
+	err := us.db.Transaction(func(tx *gorm.DB) error {
+		userRepo := repo.NewUserRepo(tx)
+		userDb, err := userRepo.GetUserByEmail(email)
+		if err != nil {
+			if err == repo.ErrUserNotFound {
+				user, err = userRepo.CreateUser(payload)
+				return err
+			}
+			return err
+		}
+		user = userDb
 
-	user, err = us.repo.CreateUser(payload)
+		return nil
+	})
+
 	return user, err
 }

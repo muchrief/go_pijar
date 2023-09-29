@@ -1,15 +1,15 @@
 package db_model
 
 type School struct {
-	Id          string      `gorm:"primaryKey" json:"id"`
-	Name        string      `gorm:"notNull;unique" json:"name"`
-	Abbrevation string      `gorm:"notNull;unique" json:"abbrevation"`
-	CampusId    string      `gorm:"notNull" json:"campus_id"`
-	FacultyId   string      `gorm:"notNull" json:"faculty_id"`
-	Campus      *Campus     `json:"campus,omitempty"`
-	Faculty     *Faculty    `json:"faculty,omitempty"`
-	Programmes  []Programme `gorm:"foreignKey:SchoolName;references:name;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"programmes"`
-	Lectures    []Lecture   `gorm:"foreignKey:SchoolName;references:name;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"lectures"`
+	Id          string       `gorm:"primaryKey" json:"id"`
+	Name        string       `gorm:"notNull;unique" json:"name"`
+	Abbrevation string       `gorm:"notNull;unique" json:"abbrevation"`
+	CampusId    string       `gorm:"notNull" json:"campus_id"`
+	FacultyId   string       `gorm:"notNull" json:"faculty_id"`
+	Campus      *Campus      `json:"campus,omitempty"`
+	Faculty     *Faculty     `json:"faculty,omitempty"`
+	Programmes  []*Programme `gorm:"foreignKey:SchoolName;references:name;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"programmes"`
+	Lectures    []*Lecture   `gorm:"foreignKey:SchoolName;references:name;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"lectures"`
 }
 
 // CREATE TABLE SCHOOL(

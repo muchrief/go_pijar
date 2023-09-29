@@ -2,6 +2,8 @@ package repo
 
 import (
 	"github.com/muchrief/go_pijar/database/db_model"
+	"github.com/muchrief/go_pijar/src/helper"
+	"github.com/muchrief/go_pijar/src/model"
 	"gorm.io/gorm"
 )
 
@@ -15,11 +17,24 @@ func NewCampusRepo(db *gorm.DB) *CampusRepo {
 	}
 }
 
-func (c *CampusRepo) GetCampus(id string) (*db_model.Campus, error) {
+func (c *CampusRepo) GetCampus() ([]*db_model.Campus, error) {
+	var result []*db_model.Campus
+	if err := c.db.Model(&db_model.Campus{}).Find(&result).Error; err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (c *CampusRepo) GetCampusDetail(id string) (*db_model.Campus, error) {
 	var result db_model.Campus
 	if err := c.db.Model(&db_model.Campus{
 		Id: id,
-	}).First(&result).Error; err != nil {
+	}).
+		Preload("Faculties").
+		Preload("Schools").
+		Preload("Club").
+		First(&result).Error; err != nil {
 		return nil, err
 	}
 
@@ -35,4 +50,24 @@ func (c *CampusRepo) GetCampusFaculties(id string) (*db_model.Campus, error) {
 	}
 
 	return &result, nil
+}
+
+func (c *CampusRepo) GetCampusSchools(id string) (*db_model.Campus, error) {
+	var result db_model.Campus
+	if err := c.db.Model(&db_model.Campus{
+		Id: id,
+	}).Preload("Schools").First(&result).Error; err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (c *CampusRepo) Campus(p *model.Pagination) ([]*db_model.Campus, error) {
+	var result []*db_model.Campus
+	err := c.db.Scopes(
+		helper.Paginate(p, c.db),
+	).Find(&result).Error
+
+	return result, err
 }

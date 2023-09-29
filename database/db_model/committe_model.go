@@ -1,10 +1,10 @@
 package db_model
 
 type Committe struct {
-	Title         string   `gorm:"primaryKey"`
-	FacultyName   string   `gorm:"primaryKey" json:"faculty_name"`
-	MeetFrequency int64    `gorm:"notNull;default:3;" json:"meet_freq"`
-	Faculty       *Faculty `json:"faculty,omitempty"`
+	Title         string `gorm:"primaryKey"`
+	FacultyName   string `gorm:"primaryKey" json:"faculty_name"`
+	MeetFrequency int64  `gorm:"notNull;default:3;" json:"meet_freq"`
+	// Faculty       *Faculty `json:"faculty,omitempty"`
 }
 
 // CREATE TABLE COMMITTEE(
