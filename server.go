@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/muchrief/go_pijar/database"
 	"github.com/muchrief/go_pijar/src/api"
 	"github.com/muchrief/go_pijar/src/helper"
@@ -28,6 +30,7 @@ func main() {
 
 	api.RegisterApi(app)
 
-	addr := helper.LoadEnv("ADDRESS", "0.0.0.0:3000")
-	app.Logger.Fatal(app.Start(addr))
+	port := helper.LoadEnv("PORT", "3000")
+
+	app.Logger.Fatal(app.Start(fmt.Sprintf("0.0.0.0:%s", port)))
 }
